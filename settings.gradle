@@ -2,3 +2,5 @@ include 'ocsf'
 include 'common'
 include 'client'
 include 'server'
+include 'commands'
+
