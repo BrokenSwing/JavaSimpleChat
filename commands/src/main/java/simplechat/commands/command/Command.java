@@ -58,7 +58,7 @@ public class Command<C>
             argsValues.put(arg.getKey(), result.getValue());
         }
 
-        CommandResult<C> commandResult = CommandResult.ok(argsValues, context);
+        CommandResult<C> commandResult = CommandResult.create(argsValues, context);
         handler.accept(commandResult);
     }
 
