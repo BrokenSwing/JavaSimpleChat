@@ -12,6 +12,7 @@ public class StringWalker
 
     /**
      * Constructs a StringWalker that will walk on the given String.
+     *
      * @param str the String to walk on
      */
     public StringWalker(String str)
@@ -53,6 +54,7 @@ public class StringWalker
     /**
      * Returns the character at the current position then moves the cursor
      * by one forward.
+     *
      * @return the character at the current position
      */
     public char next()
@@ -99,6 +101,7 @@ public class StringWalker
     /**
      * Returns the character at the position of the cursor + 1
      * but does not move the cursor.
+     *
      * @return the character of the position of the cursor + 1
      */
     public char lookAhead()
@@ -109,6 +112,7 @@ public class StringWalker
     /**
      * Returns the character at the position of the cursor + n
      * but does not move the cursor.
+     *
      * @param n The amount of character to look ahead
      * @return the character of the position of the cursor + n
      */

@@ -23,9 +23,8 @@ public class CommandResult<C>
      * Constructs a CommandResult with the values of the parsed arguments.
      *
      * @param argsValues A map of arguments to their parsed values
-     * @param ctx The context object
-     * @param <C> The type of the context object
-     *
+     * @param ctx        The context object
+     * @param <C>        The type of the context object
      * @return a command result
      */
     static <C> CommandResult<C> create(Map<String, Object> argsValues, C ctx)
@@ -38,8 +37,7 @@ public class CommandResult<C>
      *
      * @param argName The name of the argument
      * @param argType The class of the type of the argument (to be casted to)
-     * @param <T> The type of the argument
-     *
+     * @param <T>     The type of the argument
      * @return the parsed value of the argument
      */
     public <T> T get(String argName, Class<T> argType)

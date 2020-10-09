@@ -15,18 +15,17 @@ import java.util.function.Consumer;
 public class Command<C>
 {
 
-    public static <C> Builder<C> builder()
-    {
-        return new Builder<>();
-    }
-
     private final Map<String, ArgumentParser<?>> arguments;
     private final Consumer<CommandResult<C>> handler;
-
     private Command(Map<String, ArgumentParser<?>> arguments, Consumer<CommandResult<C>> handler)
     {
         this.arguments = arguments;
         this.handler = handler;
+    }
+
+    public static <C> Builder<C> builder()
+    {
+        return new Builder<>();
     }
 
     public void execute(StringWalker walker, C context) throws CommandException
@@ -72,7 +71,9 @@ public class Command<C>
 
         private final Map<String, ArgumentParser<?>> arguments = new LinkedHashMap<>();
 
-        private Builder() {}
+        private Builder()
+        {
+        }
 
         public <T> Builder<C> arg(String name, ArgumentParser<T> parser)
         {

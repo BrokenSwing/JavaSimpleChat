@@ -21,9 +21,30 @@ public class CommandsManager<C>
     private final Map<String, Command<C>> commands = new HashMap<>();
 
     /**
+     * Retrieves the name of the command.
+     *
+     * @param walker The {@link StringWalker} to parse command name from
+     * @return the name of the command
+     * @throws UnknownCommandException walker is empty or starts with a space character
+     */
+    private static String parseCommandName(StringWalker walker) throws UnknownCommandException
+    {
+        if (!walker.hasNext() || Character.isSpaceChar(walker.lookAhead()))
+        {
+            throw new UnknownCommandException(
+                    String.format("Expected command name at column %d.", walker.getCurrentPosition()),
+                    ""
+            );
+        }
+
+        /* We can unwrap value blindly because we know next character exists and isn't a space  */
+        return StringArgument.singleWord().parse(walker).getValue().toLowerCase();
+    }
+
+    /**
      * Registers a command.
      *
-     * @param name The non-empty name of the command
+     * @param name    The non-empty name of the command
      * @param command The command to register
      */
     public void registerCommand(String name, Command<C> command)
@@ -38,7 +59,7 @@ public class CommandsManager<C>
     /**
      * Creates and registers a new command to the command manager.
      *
-     * @param name The command name
+     * @param name                   The command name
      * @param builderCommandFunction A function to constructs the command
      */
     public void newCommand(String name, Function<Command.Builder<C>, Command<C>> builderCommandFunction)
@@ -49,9 +70,8 @@ public class CommandsManager<C>
     /**
      * Handles the parsing of the command using the given {@link StringWalker}.
      *
-     * @param walker The walker to use to parse the command
+     * @param walker  The walker to use to parse the command
      * @param context The context object to pass to the command execution handler
-     *
      * @throws CommandException If no command with the given name exists.
      */
     public void handleCommandLine(StringWalker walker, C context) throws CommandException
@@ -69,28 +89,6 @@ public class CommandsManager<C>
 
         walker.skipWhileSpaces(); /* Clear all spaces between command name and first argument */
         command.execute(walker, context);
-    }
-
-    /**
-     * Retrieves the name of the command.
-     *
-     * @param walker The {@link StringWalker} to parse command name from
-     * @return the name of the command
-     *
-     * @throws UnknownCommandException walker is empty or starts with a space character
-     */
-    private static String parseCommandName(StringWalker walker) throws UnknownCommandException
-    {
-        if (!walker.hasNext() ||  Character.isSpaceChar(walker.lookAhead()))
-        {
-            throw new UnknownCommandException(
-                    String.format("Expected command name at column %d.", walker.getCurrentPosition()),
-                    ""
-            );
-        }
-
-        /* We can unwrap value blindly because we know next character exists and isn't a space  */
-        return StringArgument.singleWord().parse(walker).getValue().toLowerCase();
     }
 
 }

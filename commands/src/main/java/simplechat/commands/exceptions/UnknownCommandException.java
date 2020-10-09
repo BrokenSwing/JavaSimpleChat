@@ -11,8 +11,9 @@ public class UnknownCommandException extends CommandException
 
     /**
      * Constructs an exception that occurs when trying to handle a command to do not exist.
+     *
      * @param errorMessage The message of the exception
-     * @param commandName The name of the command that do not exist
+     * @param commandName  The name of the command that do not exist
      */
     public UnknownCommandException(String errorMessage, String commandName)
     {

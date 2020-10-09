@@ -2,6 +2,7 @@ package simplechat.commands.exceptions;
 
 /**
  * Generic exceptions when handling with command system.
+ *
  * @see ArgumentParsingException
  * @see UnknownCommandException
  */

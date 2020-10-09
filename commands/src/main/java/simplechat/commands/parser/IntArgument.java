@@ -9,18 +9,23 @@ import static simplechat.commands.parser.ParsingResult.ok;
 public class IntArgument
 {
 
+    /* Disallow to create an instance of the class */
+    private IntArgument()
+    {
+    }
+
     /**
      * Parses any value of integer.<br />
      *
      * @return the corresponding argument
-     *
      * @see #positive()
      * @see #negative()
      * @see #between(int, int)
      */
     public static ArgumentParser<Integer> any()
     {
-        return StringArgument.singleWord().then(intStr -> {
+        return StringArgument.singleWord().then(intStr ->
+        {
             try
             {
                 return ok(Integer.parseInt(intStr));
@@ -57,10 +62,8 @@ public class IntArgument
      *
      * @param min The minimum value for the parsed integer
      * @param max The maximum value for the parsed integer
-     *
-     * @throws IllegalArgumentException if min value is greater than max value
-     *
      * @return the corresponding parser
+     * @throws IllegalArgumentException if min value is greater than max value
      */
     public static ArgumentParser<Integer> between(int min, int max)
     {
@@ -68,7 +71,8 @@ public class IntArgument
         {
             throw new IllegalArgumentException("min value must be lower than or equal to max value");
         }
-        return any().then(v -> {
+        return any().then(v ->
+        {
             if (v < min)
             {
                 return error(String.format("%d is lower than min value %d.", v, min));
@@ -80,8 +84,5 @@ public class IntArgument
             return ok(v);
         });
     }
-
-    /* Disallow to create an instance of the class */
-    private IntArgument() {}
 
 }

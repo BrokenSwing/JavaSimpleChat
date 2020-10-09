@@ -12,11 +12,20 @@ import java.util.function.Function;
 public class ParsingResult<T>
 {
 
+    private final T value;
+    private final String errorMessage;
+
+    private ParsingResult(T value, String errorMessage)
+    {
+        this.value = value;
+        this.errorMessage = errorMessage;
+    }
+
     /**
      * Constructs a result that is ok.
      *
      * @param value The parsed value
-     * @param <T> The type of the parsed value
+     * @param <T>   The type of the parsed value
      * @return an "ok" parsing result
      */
     public static <T> ParsingResult<T> ok(T value)
@@ -28,21 +37,12 @@ public class ParsingResult<T>
      * Constructs a result that is errored (or non-ok).
      *
      * @param errorMessage A message describing the problem encountered while parsing
-     * @param <T> The type of the parsed value
+     * @param <T>          The type of the parsed value
      * @return an "errored" parsing value
      */
     public static <T> ParsingResult<T> error(String errorMessage)
     {
         return new ParsingResult<>(null, errorMessage);
-    }
-
-    private final T value;
-    private final String errorMessage;
-
-    private ParsingResult(T value, String errorMessage)
-    {
-        this.value = value;
-        this.errorMessage = errorMessage;
     }
 
     /**
@@ -79,15 +79,15 @@ public class ParsingResult<T>
 
     /**
      * Maps the parsed value to an other value.<br />
-     *
+     * <p>
      * If <code>this</code> is errored, the converter isn't called and an errored
      * {@link ParsingResult<C>} is returned with the same error message as <code>this</code><br />.
-     *
+     * <p>
      * If <code>this</code> is ok, the converter is applied to the parsed value and {@link ParsingResult<C>}
      * returned by the converter is returned from the function.
      *
      * @param converter A function that maps the parsed value to a new ParsingResult
-     * @param <C> The target type of the mapping
+     * @param <C>       The target type of the mapping
      * @return a ParsingResult with a generic type corresponding to the target type of the mapping
      */
     public <C> ParsingResult<C> then(Function<T, ParsingResult<C>> converter)

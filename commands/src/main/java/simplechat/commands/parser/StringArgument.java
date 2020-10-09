@@ -1,7 +1,5 @@
 package simplechat.commands.parser;
 
-import simplechat.commands.command.CommandResult;
-
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 
@@ -10,6 +8,11 @@ import java.util.stream.Stream;
  */
 public class StringArgument implements ArgumentParser<String>
 {
+
+    /* Disallow to construct a StringArgument, StringArgument::any() should be used instead */
+    private StringArgument()
+    {
+    }
 
     /**
      * Parses a string that is delimited by two double-quotes.<br />
@@ -142,10 +145,6 @@ public class StringArgument implements ArgumentParser<String>
     {
         return StringArgument::readSpaceDelimitedString;
     }
-
-    /* Disallow to construct a StringArgument, StringArgument::any() should be used instead */
-    private StringArgument() {}
-
 
     @Override
     public ParsingResult<String> parse(StringWalker walker)
