@@ -75,10 +75,9 @@ public class StringWalker
     }
 
     /**
-     * Returns the character at the current position then moves the cursor
-     * backward by one.
+     * Moves the cursor backward then returns the character at the new cursor position.
      *
-     * @return the character at the current position
+     * @return the character at the previous position
      */
     public char previous()
     {
@@ -86,17 +85,15 @@ public class StringWalker
     }
 
     /**
-     * Returns the character at the current position then moves the cursor
-     * by n backward.
+     * Moves the character backward by n then returns the character at the new cursor position.
      *
      * @param n The amount of characters to move backward
-     * @return the character of the current position
+     * @return the character of the previous position
      */
     public char previous(int n)
     {
-        char c = getCurrentChar();
         this.setCurrentPosition(this.currentPosition - n);
-        return c;
+        return getCurrentChar();
     }
 
     /**

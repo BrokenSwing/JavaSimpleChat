@@ -8,6 +8,7 @@ import simplechat.commands.parser.StringWalker;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * A class that manages all known commands and their execution.
@@ -32,6 +33,17 @@ public class CommandsManager<C>
             throw new IllegalArgumentException("The command name must not be empty.");
         }
         commands.put(name.toLowerCase(), command);
+    }
+
+    /**
+     * Creates and registers a new command to the command manager.
+     *
+     * @param name The command name
+     * @param builderCommandFunction A function to constructs the command
+     */
+    public void newCommand(String name, Function<Command.Builder<C>, Command<C>> builderCommandFunction)
+    {
+        registerCommand(name, builderCommandFunction.apply(Command.builder()));
     }
 
     /**

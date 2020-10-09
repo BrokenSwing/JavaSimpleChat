@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation project(':common')
+    implementation project(':commands')
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 

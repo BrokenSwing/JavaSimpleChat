@@ -17,7 +17,7 @@ public class ArgumentParsingException extends CommandException
      */
     public ArgumentParsingException(String argumentName, String errorMessage)
     {
-        super(String.format("Error parsing argument %s : %s", argumentName, errorMessage));
+        super(String.format("Error parsing argument \"%s\" : %s", argumentName, errorMessage));
         this.argumentName = argumentName;
         this.errorMessage = errorMessage;
     }

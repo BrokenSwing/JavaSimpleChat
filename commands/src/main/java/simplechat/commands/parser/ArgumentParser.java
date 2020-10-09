@@ -11,7 +11,7 @@ public interface ArgumentParser<T>
 {
 
     /**
-     * Parses a string from the position of the received StringWalker.
+     * Parses an object from the position of the received StringWalker.
      * Expects the received walker not being at the end position.
      * Expects the first character no to be a space.
      *

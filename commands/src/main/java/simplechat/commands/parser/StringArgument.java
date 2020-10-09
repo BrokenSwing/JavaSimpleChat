@@ -60,13 +60,13 @@ public class StringArgument implements ArgumentParser<String>
             currentChar = walker.next();
             if (isSpace(currentChar))
             {
+                walker.previous(); // Don't consume space
                 break;
             }
 
             builder.append(currentChar);
         }
 
-        walker.previous(); // Don't consume space
         return ParsingResult.ok(builder.toString());
     }
 

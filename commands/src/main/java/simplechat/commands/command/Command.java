@@ -15,6 +15,11 @@ import java.util.function.Consumer;
 public class Command<C>
 {
 
+    public static <C> Builder<C> builder()
+    {
+        return new Builder<>();
+    }
+
     private final Map<String, ArgumentParser<?>> arguments;
     private final Consumer<CommandResult<C>> handler;
 
@@ -66,6 +71,8 @@ public class Command<C>
     {
 
         private final Map<String, ArgumentParser<?>> arguments = new LinkedHashMap<>();
+
+        private Builder() {}
 
         public <T> Builder<C> arg(String name, ArgumentParser<T> parser)
         {
