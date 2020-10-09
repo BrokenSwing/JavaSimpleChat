@@ -4,7 +4,7 @@ import static simplechat.commands.parser.ParsingResult.error;
 import static simplechat.commands.parser.ParsingResult.ok;
 
 /**
- * A class that provides static method that returns different parsers for int arguments.
+ * A class that provides static methods that returns different parsers for int arguments.
  */
 public class IntArgument
 {
@@ -27,7 +27,7 @@ public class IntArgument
             }
             catch (NumberFormatException e)
             {
-                return error(String.format("%s is not an integer.", intStr));
+                return error(intStr + " is not an integer.");
             }
         });
     }
