@@ -49,7 +49,7 @@ public class IntArgument
      */
     public static ArgumentParser<Integer> negative()
     {
-        return any().then(v -> v > 0 ? error(v + "is not a negative value.") : ok(v));
+        return any().then(v -> v > 0 ? error(v + " is not a negative value.") : ok(v));
     }
 
     /**
