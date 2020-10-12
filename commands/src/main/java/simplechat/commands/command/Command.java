@@ -37,11 +37,21 @@ public class Command<C>
         while (it.hasNext())
         {
             Map.Entry<String, ArgumentParser<?>> arg = it.next();
+            String commandName = arg.getKey();
+
+            if (!walker.hasNext())
+            {
+                throw new ArgumentParsingException(
+                        commandName,
+                        "Expected argument " + commandName + " at column " + walker.getCurrentPosition()
+                );
+            }
+
             result = arg.getValue().parse(walker);
 
             if (!result.isOk())
             {
-                throw new ArgumentParsingException(arg.getKey(), result.getErrorMessage());
+                throw new ArgumentParsingException(commandName, result.getErrorMessage());
             }
 
             int spacesCount = walker.skipWhileSpaces();
