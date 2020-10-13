@@ -17,6 +17,7 @@ public class Command<C>
 
     private final Map<String, ArgumentParser<?>> arguments;
     private final Consumer<CommandResult<C>> handler;
+
     private Command(Map<String, ArgumentParser<?>> arguments, Consumer<CommandResult<C>> handler)
     {
         this.arguments = arguments;
