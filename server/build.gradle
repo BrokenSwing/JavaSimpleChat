@@ -18,7 +18,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'simplechat.EchoServer'
+        attributes 'Main-Class': 'simplechat.server.ServerBoostrap'
     }
 }
 
