@@ -5,59 +5,116 @@ import simplechat.commands.command.CommandResult;
 import simplechat.commands.parser.IntArgument;
 import simplechat.commands.parser.StringArgument;
 
+import java.io.IOException;
+
 public class ClientCommandsManager extends CommandsManager<ChatClient>
 {
 
     public ClientCommandsManager()
     {
-        this.newCommand("quit", builder -> builder.handle(this::handleQuitCommand));
-        this.newCommand("logoff", builder -> builder.handle(this::handleLogOffCommand));
+        this.newCommand("quit", builder -> builder.handle(this::onQuit));
+        this.newCommand("logoff", builder -> builder.handle(this::onLogOff));
         this.newCommand("sethost", builder -> builder
                 .arg("host", StringArgument.singleWord())
-                .handle(this::handleSetHostCommand)
+                .handle(this::onSetHost)
         );
         this.newCommand("setport", builder -> builder
                 .arg("port", IntArgument.positive())
-                .handle(this::handleSetPortCommand)
+                .handle(this::onSetPort)
         );
-        this.newCommand("login", builder -> builder.handle(this::handleLoginCommand));
-        this.newCommand("gethost", builder -> builder.handle(this::handleGetHostCommand));
-        this.newCommand("getport", builder -> builder.handle(this::handleGetPortCommand));
+        this.newCommand("connect", builder -> builder.handle(this::onConnect));
+        this.newCommand("gethost", builder -> builder.handle(this::onGetHost));
+        this.newCommand("getport", builder -> builder.handle(this::onGetPort));
     }
 
-    private void handleQuitCommand(CommandResult<ChatClient> result)
+    private void onQuit(CommandResult<ChatClient> result)
     {
         result.getContext().quit();
     }
 
-    private void handleLogOffCommand(CommandResult<ChatClient> result)
+    private void onLogOff(CommandResult<ChatClient> result)
     {
-        result.getContext().logOff();
+        ChatClient client = result.getContext();
+        if (client.isConnected())
+        {
+            try
+            {
+                client.closeConnection();
+            }
+            catch (IOException e)
+            {
+                client.getClientUI().errorMessage("Unable to log off.");
+            }
+        }
+        else
+        {
+            client.getClientUI().errorMessage("You're already logged off.");
+        }
     }
 
-    private void handleSetHostCommand(CommandResult<ChatClient> result)
+    private void onSetHost(CommandResult<ChatClient> result)
     {
-        result.getContext().changeHost(result.get("host", String.class));
+        ChatClient client = result.getContext();
+        if (client.isConnected())
+        {
+            client.getClientUI().errorMessage("You can't change the host while you're connected.");
+        }
+        else
+        {
+            String newHost = result.get("host", String.class);
+            client.setHost(newHost);
+            client.getClientUI().infoMessage("Host is now : " + newHost);
+        }
     }
 
-    private void handleSetPortCommand(CommandResult<ChatClient> result)
+    private void onSetPort(CommandResult<ChatClient> result)
     {
-        result.getContext().changePort(result.get("port", Integer.class));
+        ChatClient client = result.getContext();
+        if (client.isConnected())
+        {
+            client.getClientUI().errorMessage("You can't change the port while you're connected.");
+        }
+        else
+        {
+            int newPort = result.get("port", Integer.class);
+            client.setPort(newPort);
+            client.getClientUI().infoMessage("Port is now : " + newPort);
+        }
     }
 
-    private void handleLoginCommand(CommandResult<ChatClient> result)
+    private void onConnect(CommandResult<ChatClient> result)
     {
-        result.getContext().login();
+        ChatClient client = result.getContext();
+        if (client.isConnected())
+        {
+            client.getClientUI().errorMessage("You're already connected.");
+        }
+        else
+        {
+            try
+            {
+                client.openConnection();
+                client.getClientUI().infoMessage("Connected !");
+            }
+            catch (IOException e)
+            {
+                client.getClientUI().errorMessage(String.format(
+                        "Unable to connect to %s:%d\n",
+                        client.getHost(),
+                        client.getPort()
+                ));
+            }
+        }
     }
 
-    private void handleGetHostCommand(CommandResult<ChatClient> result)
+    private void onGetHost(CommandResult<ChatClient> result)
     {
         result.getContext()
                 .getClientUI()
                 .infoMessage("Current host is : " + result.getContext().getHost());
     }
 
-    private void handleGetPortCommand(CommandResult<ChatClient> result)
+    private void onGetPort(CommandResult<ChatClient> result)
     {
         result.getContext()
                 .getClientUI()

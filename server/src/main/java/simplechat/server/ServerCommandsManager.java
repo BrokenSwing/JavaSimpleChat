@@ -16,7 +16,7 @@ public class ServerCommandsManager extends CommandsManager<EchoServer>
         newCommand("close", b -> b.handle(this::onClose));
         newCommand("setport", b -> b.arg("port", IntArgument.positive()).handle(this::onSetPort));
         newCommand("start", b -> b.handle(this::onStart));
-        newCommand("getport", b-> b.handle(this::onGetPort));
+        newCommand("getport", b -> b.handle(this::onGetPort));
     }
 
     private void onQuit(CommandResult<EchoServer> result)

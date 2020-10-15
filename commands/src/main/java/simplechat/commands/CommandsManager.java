@@ -42,6 +42,24 @@ public class CommandsManager<C>
     }
 
     /**
+     * Creates a {@link StringWalker} on the given command line then moves the cursor
+     * after the given prefix.<br />
+     * Note: it just put the cursor at position equal to the length of the given prefix.
+     * It doesn't check if the prefix is at the beginning of the command line or
+     * if the command line is long enough.
+     *
+     * @param prefix      The command prefix
+     * @param commandLine The command line to create a walker on
+     * @return the created {@link StringWalker}
+     */
+    public static StringWalker walkerFrom(String prefix, String commandLine)
+    {
+        StringWalker walker = new StringWalker(commandLine);
+        walker.next(prefix.length());
+        return walker;
+    }
+
+    /**
      * Registers a command.
      *
      * @param name    The non-empty name of the command
