@@ -100,7 +100,7 @@ public class CommandsManager<C>
         if (command == null)
         {
             throw new UnknownCommandException(
-                    String.format("Command with name %s does no exists.", commandName),
+                    String.format("Command with name %s does no exist.", commandName),
                     commandName
             );
         }
