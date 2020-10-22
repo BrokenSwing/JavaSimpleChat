@@ -1,6 +1,6 @@
 // This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
+// license found at www.lloseng.com
 
 package ocsf.client;
 
@@ -13,8 +13,8 @@ import java.net.SocketException;
 
 /**
  * The <code> AbstractClient </code> contains all the
- * methods necessary to set up the simplechat.client side of a simplechat.client-server
- * architecture.  When a simplechat.client is thus connected to the
+ * methods necessary to set up the client side of a client-server
+ * architecture.  When a client is thus connected to the
  * server, the two programs can then exchange <code> Object </code>
  * instances.<p>
  * <p>
@@ -25,13 +25,40 @@ import java.net.SocketException;
  * Several public service methods are provided to
  * application that use this framework.<p>
  * <p>
+ * The modifications made to this class in version 2.2 are:
+ * <ul>
+ * <li> Method <code>sendToServer()</code> is not
+ * declared final anymore. This allows user of the
+ * framework to override it, perhaps to perform some
+ * filtering before sending the message to the server.
+ * However, any overriden version of this method
+ * should include a call to the original one.
+ * <li> A test is made before calling the
+ * <code>handleMessageFromServer</code> method such that
+ * when  <code>closeConnection</code> returns, it
+ * is garanteed that no new messages will be handled.
+ * </ul>
+ * The modifications made to this class in version 2.31 are:
+ * <ul>
+ * <li> The <code>run()</code> method now calls the <code>connectionException</code>
+ * callback when an object of unknown class is received from the input stream
+ * or when the message handler throw a <code>RuntimeException</code>.
+ * <li> The <code>connectionClosed</code> callback might be called after
+ * <code>connectionException</code> if the exception causes the end of te thread.
+ * <li> The <code>clientReader</code> reference is set to <code>null</code>
+ * earlier in <code>run()</code> method.
+ * <li> The call to <code>connectionClosed</code> has been moved from
+ * <code>closeConnection</code> to <code>run</code> method to garantee
+ * that connection is really closed when this callback is called.
+ * </ul><p>
+ * <p>
  * Project Name: OCSF (Object Client-Server Framework)<p>
  *
  * @author Dr. Robert Lagani&egrave;re
  * @author Dr. Timothy C. Lethbridge
  * @author Fran&ccedil;ois  B&eacutel;langer
  * @author Paul Holden
- * @version February 2001 (2.12)
+ * @version December 2003 (2.31)
  */
 public abstract class AbstractClient implements Runnable
 {
@@ -81,7 +108,7 @@ public abstract class AbstractClient implements Runnable
 // CONSTRUCTORS *****************************************************
 
     /**
-     * Constructs the simplechat.client.
+     * Constructs the client.
      *
      * @param host the server's host name.
      * @param port the port number.
@@ -137,14 +164,20 @@ public abstract class AbstractClient implements Runnable
     /**
      * Sends an object to the server. This is the only way that
      * methods should communicate with the server.
+     * This method can be overriden, but if so it should still perform
+     * the general function of sending to server, by calling the
+     * <code>super.sendToServer()</code> method
+     * perhaps after some kind of filtering is done.
      *
      * @param msg The message to be sent.
      * @throws IOException if an I/O error occurs when sending
      */
-    final public void sendToServer(Object msg) throws IOException
+    public void sendToServer(Object msg) throws IOException
     {
         if (clientSocket == null || output == null)
+        {
             throw new SocketException("socket does not exist");
+        }
 
         output.writeObject(msg);
     }
@@ -156,24 +189,15 @@ public abstract class AbstractClient implements Runnable
      */
     final public void closeConnection() throws IOException
     {
-        // Prevent the thread from looping any more
-        readyToStop = true;
 
-        try
-        {
-            closeAll();
-        }
-        finally
-        {
-            // Call the hook method
-            connectionClosed();
-        }
+        readyToStop = true;
+        closeAll();
     }
 
 // ACCESSING METHODS ------------------------------------------------
 
     /**
-     * @return true if the simplechat.client is connnected.
+     * @return true if the client is connnected.
      */
     final public boolean isConnected()
     {
@@ -221,9 +245,9 @@ public abstract class AbstractClient implements Runnable
     }
 
     /**
-     * returns the simplechat.client's description.
+     * returns the client's description.
      *
-     * @return the simplechat.client's Inet address.
+     * @return the client's Inet address.
      */
     final public InetAddress getInetAddress()
     {
@@ -253,11 +277,31 @@ public abstract class AbstractClient implements Runnable
                 // Get data from Server and send it to the handler
                 // The thread waits indefinitely at the following
                 // statement until something is received from the server
-                msg = input.readObject();
 
-                // Concrete subclasses do what they want with the
-                // msg by implementing the following method
-                handleMessageFromServer(msg);
+                try
+                { // added in version 2.31
+
+                    msg = input.readObject();
+
+                    // Concrete subclasses do what they want with the
+                    // msg by implementing the following method
+                    if (!readyToStop)
+                    {  // Added in version 2.2
+                        handleMessageFromServer(msg);
+                    }
+
+                }
+                catch (ClassNotFoundException ex)
+                { // when an unknown class is received
+
+                    connectionException(ex);
+
+                }
+                catch (RuntimeException ex)
+                { // thrown by handleMessageFromServer
+
+                    connectionException(ex);
+                }
             }
         }
         catch (Exception exception)
@@ -272,12 +316,15 @@ public abstract class AbstractClient implements Runnable
                 {
                 }
 
+                clientReader = null;
                 connectionException(exception);
             }
         }
         finally
         {
+
             clientReader = null;
+            connectionClosed();   // moved here in version 2.31
         }
     }
 
@@ -296,8 +343,12 @@ public abstract class AbstractClient implements Runnable
 
     /**
      * Hook method called each time an exception is thrown by the
-     * simplechat.client's thread that is waiting for messages from the server.
+     * client's thread that is reading messages from the server.
      * The method may be overridden by subclasses.
+     * Most exceptions will cause the end of the reading thread except for
+     * <code>ClassNotFoundException<\code>s received when an object of
+     * unknown class is received and for the <code>RuntimeException</code>s
+     * that can be thrown by the message handling method implemented by the user.
      *
      * @param exception the exception raised.
      */
@@ -315,7 +366,7 @@ public abstract class AbstractClient implements Runnable
     }
 
     /**
-     * Handles a message sent from the server to this simplechat.client.
+     * Handles a message sent from the server to this client.
      * This MUST be implemented by subclasses, who should respond to
      * messages.
      *
@@ -331,8 +382,10 @@ public abstract class AbstractClient implements Runnable
      *
      * @throws IOException if an I/O error occurs when closing.
      */
-    private void closeAll() throws IOException
+    final private void closeAll() throws IOException
     {
+        // This method is final since version 2.2
+
         try
         {
             //Close the socket
