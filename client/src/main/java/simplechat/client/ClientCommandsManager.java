@@ -4,6 +4,7 @@ import simplechat.commands.CommandsManager;
 import simplechat.commands.command.CommandResult;
 import simplechat.commands.parser.IntArgument;
 import simplechat.commands.parser.StringArgument;
+import simplechat.common.SharedConstants;
 
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ public class ClientCommandsManager extends CommandsManager<ChatClient>
                 .arg("port", IntArgument.positive())
                 .handle(this::onSetPort)
         );
-        this.newCommand("connect", builder -> builder.handle(this::onConnect));
+        this.newCommand("login", builder -> builder.handle(this::onLogin));
         this.newCommand("gethost", builder -> builder.handle(this::onGetHost));
         this.newCommand("getport", builder -> builder.handle(this::onGetPort));
     }
@@ -82,7 +83,7 @@ public class ClientCommandsManager extends CommandsManager<ChatClient>
         }
     }
 
-    private void onConnect(CommandResult<ChatClient> result)
+    private void onLogin(CommandResult<ChatClient> result)
     {
         ChatClient client = result.getContext();
         if (client.isConnected())
@@ -94,6 +95,7 @@ public class ClientCommandsManager extends CommandsManager<ChatClient>
             try
             {
                 client.openConnection();
+                client.sendToServer(SharedConstants.COMMAND_PREFIX + "login " + client.getDefaultName());
                 client.getClientUI().infoMessage("Connected !");
             }
             catch (IOException e)
