@@ -24,12 +24,12 @@ public class LoginCommandHandler implements Consumer<CommandResult<ConnectionToC
         ConnectionToClient client = result.getContext();
         if (isLoggedIn(client))
         {
-            trySendToClient(client, "Server> You're already logged in.");
+            trySendToClient(client, "Server Error> You're already logged in.");
         }
         else
         {
             client.setInfo("name", result.get("name", String.class));
-            trySendToClient(client, "Server> Logged in !");
+            trySendToClient(client, "Server Message> Logged in !");
         }
     }
 

@@ -16,7 +16,7 @@ public class ServerBoostrap
      */
     public static void main(String[] args)
     {
-        int port = 0; //Port to listen on
+        int port; //Port to listen on
 
         try
         {
